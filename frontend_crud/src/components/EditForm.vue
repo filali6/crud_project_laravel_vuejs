@@ -16,7 +16,7 @@
                     Modifier Utilisateur
                 </a-button>
 
-                <router-link to="/">
+                <router-link to="/home">
                     <a-button size="large">
                         <close-outlined />
                         Annuler
@@ -94,7 +94,7 @@ export default {
                 message.success('Utilisateur modifié avec succès !')
 
                 // Redirection
-                this.$router.push('/')
+                this.$router.push('/home')
 
             } catch (error) {
                 console.error(' Erreur lors de la mise à jour:', error)

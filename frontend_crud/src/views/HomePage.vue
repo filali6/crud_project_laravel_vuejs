@@ -4,7 +4,7 @@
     w el script heyaa fel react elli kbal el return win naaytou lele states w les service w lkol  -->
   <div class="home-page">
     <a-typography-title :level="2" style="text-align: center; margin-bottom: 2rem;">
-      Liste des Utilisateurs
+      📋Liste des Utilisateurs📋
     </a-typography-title>
 
 
@@ -29,7 +29,7 @@
               <strong>{{ item.name }}</strong>
             </template>
             <template #description>
-              📧 {{ item.email }}
+              🖃 {{ item.email }}
             </template>
           </a-list-item-meta>
 
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { getAllUsers, deleteUser } from '@/services/userService'
+import { getAllUsers, deleteUser } from '../services/userService'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 
@@ -119,14 +119,14 @@ export default {
         console.log(' Suppression de l\'utilisateur:', userId)
         await deleteUser(userId)
 
-        // Supprimer de la liste locale
+        
         this.users = this.users.filter(user => user.id !== userId)
 
         console.log(' Utilisateur supprimé avec succès')
-        message.success('Utilisateur supprimé avec succès !')
+        message.success('User supprimé avec succes')
       } catch (error) {
-        console.error('Erreur lors de la suppression:', error)
-        message.error('Erreur lors de la suppression: ' + (error.response?.data?.message || error.message))
+        console.error('erreur suppression:', error)
+        message.error('erreur  de suppression: ' + (error.response?.data?.message || error.message))
       }
     }
   }

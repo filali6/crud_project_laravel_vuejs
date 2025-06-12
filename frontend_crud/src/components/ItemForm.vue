@@ -1,7 +1,7 @@
 <template>
     <a-form layout="vertical" @submit.prevent="submitForm" class="add-form">
         <a-form-item label="Nom" required>
-            <a-input v-model:value="form.name" placeholder="Entrez le nom" size="large" :disabled="loading" />
+            <a-input v-model:value="form.name" placeholder="Entrez le nom" size="large" :disabled="loading" :rules="[{ required: true, message: 'Veuillez saisir un nom !' }]" />
         </a-form-item>
 
         <a-form-item label="Email" required>
@@ -11,7 +11,7 @@
 
         <a-form-item label="Mot de passe" required>
             <a-input-password v-model:value="form.password" placeholder="Entrez un mot de passe" size="large"
-                :disabled="loading" />
+                :disabled="loading" :rules="[{ required: true, message: 'Veuillez saisir un !' }]"/>
         </a-form-item>
 
         <a-form-item style="text-align: center; margin-top: 2rem;">
@@ -21,7 +21,7 @@
                     Ajouter utilisateur
                 </a-button>
 
-                <router-link to="/">
+                <router-link to="/home">
                     <a-button size="large">
                         <close-outlined />
                         Annuler
@@ -57,7 +57,7 @@ export default {
 
     methods: {
         async submitForm() {
-            // Validation simple
+             
             if (!this.form.name || !this.form.email || !this.form.password) {
                 message.warning('Tous les champs sont obligatoires')
                 return
@@ -66,15 +66,14 @@ export default {
             try {
                 this.loading = true
                 console.log('Création utilisateur:', this.form)
-
-                // Appeler le service de création
+ 
                 const newUser = await createUser(this.form)
 
                 console.log('Utilisateur créé:', newUser)
                 message.success('Utilisateur ajouté avec succès !')
 
-                // Rediriger vers la page d'accueil
-                this.$router.push('/')
+                
+                this.$router.push('/home')
 
             } catch (error) {
                 console.error(' Erreur lors de la création:', error)

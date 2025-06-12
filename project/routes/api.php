@@ -3,8 +3,23 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth;
 
+Route::post('register/admin', [Auth::class, 'registerAdmin']);
+Route::post('register/user', [Auth::class, 'registerUser']);
+Route::post('login', [Auth::class, 'login'])->name('login');
+Route::get('users', [UserController::class, 'index']);
 
-Route::apiResource('users', UserController::class);
-//star heda yaamel l get w el post wel patch w kol chay wahdou yaaref ki taayet lel api 
-?>
+Route::middleware('auth:api')->group(function () {
+    Route::post('logout', [Auth::class, 'logout']);
+    Route::get('me', [Auth::class, 'me']);
+});
+
+Route::middleware('auth:admin-api')->group(function () {  
+    Route::get('users/{user}', [UserController::class, 'show']);   
+    Route::post('logout', [Auth::class, 'logout']);                
+    Route::get('me', [Auth::class, 'me']);                         
+    Route::post('users', [UserController::class, 'store']);
+    Route::patch('users/{user}', [UserController::class, 'update']);
+    Route::delete('users/{user}', [UserController::class, 'destroy']);
+});

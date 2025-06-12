@@ -21,12 +21,7 @@ export default {
         ItemForm,
         PlusOutlined
     },
-    methods: {
-        handleCreate(data) {
-            console.log('Créer:', data)
-            // Envoie vers API ou stockage
-        }
-    }
+    
 }
 </script>
 
