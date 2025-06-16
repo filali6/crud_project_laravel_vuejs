@@ -92,7 +92,17 @@ export default {
   },
 
   async mounted() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.$router.push('/login');
+      return;
+    }
     await this.loadUsers()
+    window.addEventListener('userListUpdate', this.handleUserListUpdate)
+  
+  },
+  beforeUnmount() {
+    window.removeEventListener('userListUpdate', this.handleUserListUpdate)
   },
 
   methods: {
@@ -128,6 +138,10 @@ export default {
         console.error('erreur suppression:', error)
         message.error('erreur  de suppression: ' + (error.response?.data?.message || error.message))
       }
+    },
+    handleUserListUpdate() {
+      console.log('🔄 Rafraîchissement automatique de la liste (Admin)')
+      this.loadUsers() // Recharger la liste sans reload de page
     }
   }
 }

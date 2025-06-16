@@ -101,3 +101,30 @@ export const deleteUser = async (id) => {
     throw error;
   }
 };
+export const sendMessage = async (messageText) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      throw new Error("Token manquant");
+    }
+
+    const response = await Axios.post(
+      `http://127.0.0.1:8000/api/chat/send-message`,
+      {
+        message: messageText.trim(),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(" Erreur envoi message:", error);
+    throw error;
+  }
+};

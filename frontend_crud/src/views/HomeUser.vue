@@ -21,6 +21,19 @@
       <a-list v-if="!loading && users.length > 0" :data-source="users" item-layout="horizontal" class="user-list">
         <template #renderItem="{ item }">
           <a-list-item>
+            <template #actions>
+              <a-button 
+                type="primary" 
+                shape="circle" 
+                @click="goToChat(item.id)"
+                title="Envoyer un message"
+                class="message-btn"
+              >
+                <template #icon>
+                  <message-outlined />
+                </template>
+              </a-button>
+            </template>
             <a-list-item-meta>
               <template #title>
                 <strong>{{ item.name }}</strong>
@@ -50,10 +63,11 @@
   import { getAllUsers } from '../services/userService'
    
   import { message } from 'ant-design-vue'
-  
+  import { MessageOutlined } from '@ant-design/icons-vue'
   export default {
     name: 'HomeUser',
     components: {
+      MessageOutlined
        
       
     },
@@ -74,7 +88,12 @@
   }
   
   await this.loadUsers()
+  window.addEventListener('userListUpdate', this.handleUserListUpdate)
 },
+beforeUnmount() {
+    window.removeEventListener('userListUpdate', this.handleUserListUpdate)
+  },
+
   
     methods: {
       async loadUsers() {
@@ -93,6 +112,13 @@
         }
   
         this.loading = false
+      },
+      handleUserListUpdate() {
+      console.log(' Rafraîchissement automatique de la liste')
+      this.loadUsers()  
+    },
+    goToChat(userId) {
+        this.$router.push(`/chat/${userId}`)
       },
   
       
