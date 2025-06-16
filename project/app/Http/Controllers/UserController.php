@@ -1,10 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Events\MessageSent;
 use App\Models\User;
+use App\Models\Message;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Events\UserCreated;
+use App\Events\UserDeleted;
+
+
 class UserController extends Controller
 {
     /**
@@ -41,6 +48,7 @@ class UserController extends Controller
             'email'=>$request->email,
             'password'=>Hash::make($request->password),
         ]);
+        event(new UserCreated($user->toArray()));
         return response()->json($user,201);
     }
 
@@ -86,7 +94,11 @@ class UserController extends Controller
     /** delete /api/users/{id} */
     public function destroy(User $user)
     {
+        event(new UserDeleted($user->id,$user->name));
         $user->delete();
         return response()->json(null,204);
     }
+  
 }
+    
+

@@ -2,7 +2,7 @@
   <div id="app">
     <a-layout>
        
-      <a-layout-header v-if="isAuthenticated" class="header">
+      <a-layout-header v-if="shouldShowHeader" class="header">
         <div class="nav-container">
           <h2 class="nav-title">CRUD Test Laravel+Vue.js</h2>
           
@@ -32,7 +32,7 @@
         </div>
       </a-layout-header>
 
-      <a-layout-content class="main-content" :class="{ 'no-header': !isAuthenticated }">
+      <a-layout-content class="main-content" :class="{ 'no-header': !shouldShowHeader }">
         <router-view />
       </a-layout-content>
     </a-layout>
@@ -43,6 +43,7 @@
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import { logout } from '@/services/authService'
 import { message } from 'ant-design-vue'
+import websocketService from './services/websocketService'
 
 export default {
   name: 'App',
@@ -59,20 +60,32 @@ export default {
     }
   },
   
-  mounted() {
-    // Vérifier l'authentification au montage
+  computed: {
+    
+    shouldShowHeader() {
+       
+      const authPages = ['/login', '/register']
+      const currentPath = this.$route.path
+      
+      return this.isAuthenticated && !authPages.includes(currentPath)
+    }
+  },
+  
+  async mounted() {
     this.checkAuthentication()
+    if (this.isAuthenticated) {
+      await websocketService.connect()
+    }
   },
   
   methods: {
     checkAuthentication() {
       this.isAuthenticated = !!localStorage.getItem('token')
-      console.log(' Authentification vérifiée:', this.isAuthenticated)
+      console.log('Authentification vérifiée:', this.isAuthenticated)
       const user = JSON.parse(localStorage.getItem('user') || '{}')
       this.userRole = user.role || null
       
-      console.log('🔍 Authentification vérifiée:', this.isAuthenticated)
-      console.log('🔍 Rôle utilisateur:', this.userRole)
+      console.log('role connecté:', this.userRole)
     },
     
     async handleLogout() {
@@ -80,12 +93,12 @@ export default {
       
       try {
         await logout()
-        message.success('Déconnexion réussie')
+        message.success('disconnected')
+        websocketService.disconnect()
         
          
         this.isAuthenticated = false
         this.userRole = null
-        
         
         this.$router.push('/login')
         
@@ -93,7 +106,7 @@ export default {
         console.error('Erreur lors de la déconnexion:', error)
         message.error('Erreur lors de la déconnexion')
         
-        
+         
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         this.isAuthenticated = false
@@ -104,10 +117,13 @@ export default {
     }
   },
   
-  // Écouter les changements de route pour mettre à jour la navbar
+   
   watch: {
-    '$route'() {
+    async '$route'() {
       this.checkAuthentication()
+      if (this.isAuthenticated && !websocketService.pusher) {
+        await websocketService.connect()
+      }
     }
   }
 }

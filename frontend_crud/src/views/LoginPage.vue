@@ -113,8 +113,8 @@ export default {
 
         console.log('Login successful:', result)
         
-        // Message de succès
-        message.success('Connexion réussie ! 🎉')
+         
+        message.success('Connexion réussie ! ')
          
         if (result.user?.role === 'admin' || result.role === 'admin') {
           this.$router.push('/home')
