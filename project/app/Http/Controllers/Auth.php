@@ -80,7 +80,7 @@ class Auth extends Controller
         $email = $request->email;
         $password = $request->password;
 
-        // Vérifier d'abord si c'est un admin
+       
         $admin = Admin::where('email', $email)->first();
         if ($admin && Hash::check($password, $admin->password)) {
             $token = auth('admin-api')->login($admin);
